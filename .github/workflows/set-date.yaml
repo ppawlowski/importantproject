@@ -1,0 +1,19 @@
+name: set date
+on:
+  issues:
+    types: [edited]
+
+jobs:
+  set-date:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Check if issue is part of a project
+        run: |
+          ISSUE_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
+          PROJECT_CARD=$(gh api repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/projects --jq '.[] | select(.name=="Development")')
+          if [ -z "$PROJECT_CARD" ]; then
+            echo "Issue is not part of the Development project"
+            exit 1
+          else
+            echo "Issue is part of the Development project"
+          fi
