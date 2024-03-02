@@ -12,12 +12,15 @@ jobs:
       - name: Check if issue is part of a project
         run: |
           ISSUE_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
-          PROJECT_CARD=$(gh api repos/${{ github.repository }}/issues/${ISSUE_NUMBER}/projects --jq '.[] | select(.name=="Development")')
-          if [ -z "$PROJECT_CARD" ]; then
+          REPO_OWNER=$(jq --raw-output .repository.owner.login "$GITHUB_EVENT_PATH")
+          REPO_NAME=$(jq --raw-output .repository.name "$GITHUB_EVENT_PATH")
+          QUERY=$(printf 'query { repository(owner: "%s", name: "%s") { issue(number: %s) { projectCards(first: 100) { nodes { project { name } } } } } }' "$REPO_OWNER" "$REPO_NAME" "$ISSUE_NUMBER")
+          PROJECT_CARD=$(curl -s -H "Authorization: bearer ${{ secrets.GITHUB_TOKEN }}" -d "{\"query\": \"$QUERY\"}" https://api.github.com/graphql | jq '.data.repository.issue.projectCards.nodes[].project.name')
+          if [[ $PROJECT_CARD != *"Development"* ]]; then
             echo "Issue is not part of the Development project"
             exit 1
           else
             echo "Issue is part of the Development project"
           fi
         env:
-          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
