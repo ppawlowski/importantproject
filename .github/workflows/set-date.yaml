@@ -6,7 +6,9 @@ on:
 jobs:
   set-date:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
+      - name: debug
+        run: echo  "$GITHUB_EVENT_PATH" 
       - name: Check if issue is part of a project
         run: |
           ISSUE_NUMBER=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
