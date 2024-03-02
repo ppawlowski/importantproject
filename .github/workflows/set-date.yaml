@@ -1,7 +1,7 @@
 name: set date
 on:
   issues:
-    types: [edited]
+    types: [opened, edited]
 
 jobs:
   set-date:
