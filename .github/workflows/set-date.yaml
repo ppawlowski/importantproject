@@ -18,7 +18,6 @@ jobs:
           PROJECT_CARD=$(gh api graphql -f query="$QUERY" | jq '.data.repository.issue.projectCards.nodes[].project.name')
           if [[ $PROJECT_CARD != *"Development"* ]]; then
             echo "Issue is not part of the Development project"
-            exit 1
           else
             echo "Issue is part of the Development project"
             START_DATE=$(gh api graphql -f query="$QUERY" | jq '.data.repository.issue.projectCards.nodes[].content.body' | grep -oP 'Start Date: \K.*')
