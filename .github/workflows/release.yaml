@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Wait for other workflow to complete
         if: '!startsWith(github.event.pull_request.title, "feat: Release")'
