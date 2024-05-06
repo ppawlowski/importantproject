@@ -15,7 +15,8 @@ jobs:
           # Add your long running task here
           sleep 120
 
-      - name: fail on purpose
+      - if: false
+        name: fail on purpose
         run: exit 1
 
       - name: Complete workflow
