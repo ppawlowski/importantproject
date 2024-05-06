@@ -1,32 +1,15 @@
 name: Release
 on:
   workflow_dispatch:
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # - name: Wait for other workflow to complete
-      #   run: |
-      #     while :; do
-      #       status=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-      #         https://api.github.com/repos/${{ github.repository }}/actions/runs | \
-      #         jq -r '.workflow_runs[] | select(.name == "Long Running Workflow") | .conclusion')
-      #       if [[ "$status" == "success" ]]; then
-      #         break
-      #       elif [[ "$status" == "failure" ]]; then
-      #         echo "Other workflow failed"
-      #         exit 1
-      #       else
-      #         echo "Long Running Workflow has not completed yet"
-      #         sleep 60
-      #       fi
-      #     done
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Wait for other workflow to complete
+        if: '!startsWith(github.event.pull_request.title, "feat: Release")'
         run: |
           while :; do
             result=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
