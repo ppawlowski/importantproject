@@ -10,13 +10,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: fail on purpose
-        run: exit 1
-
       - name: Run long running task
         run: |
           # Add your long running task here
           sleep 120
+
+      - name: fail on purpose
+        run: exit 1
 
       - name: Complete workflow
         run: echo "Workflow completed"
