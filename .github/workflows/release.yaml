@@ -31,7 +31,7 @@ jobs:
           while :; do
             result=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               https://api.github.com/repos/${{ github.repository }}/actions/runs | \
-              jq -r '.workflow_runs | sort_by(.created_at) | reverse | .[0] | select(.name == "Long Running Workflow")')
+              jq -r '.workflow_runs | map(select(.name == "Long Running Workflow")) | sort_by(.created_at) | reverse | .[0]')
             status=$(echo "$result" | jq -r '.status')
             conclusion=$(echo "$result" | jq -r '.conclusion')
             if [[ "$status" == "completed" ]]; then
