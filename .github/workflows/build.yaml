@@ -1,0 +1,19 @@
+name: Long Running Workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run long running task
+        run: |
+          # Add your long running task here
+          sleep 120
+
+      - name: Complete workflow
+        run: echo "Workflow completed"
