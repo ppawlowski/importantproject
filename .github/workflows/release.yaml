@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for other workflow to complete
-        if: "${{ startsWith(github.event.pull_request.title, 'feat: Release') }}"
+        if: "${{ startsWith(github.event.pull_request.title, 'feature: Release') }}"
         run: |
           while :; do
             result=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
