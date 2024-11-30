@@ -24,6 +24,8 @@ jobs:
 
   check-upstream-jobs:
     runs-on: ubuntu-latest
+    outputs:
+      tests_status: ${{ steps.check-status.outputs.jobs_status }}
     steps:
       - name: Check upstream job statuses
         uses: actions/github-script@v6
@@ -53,10 +55,10 @@ jobs:
               failedJobs.forEach(job => {
                 console.log(`- ${job.name}`);
               });
-              core.setOutput('tests_status', 'failure');
+              core.setOutput('jobs_status', 'failure');
             } else {
               console.log('All specified jobs passed or were skipped');
-              core.setOutput('tests_status', 'success');
+              core.setOutput('jobs_status', 'success');
             }
 
   publish:
