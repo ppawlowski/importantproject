@@ -25,9 +25,10 @@ jobs:
   check-upstream-jobs:
     runs-on: ubuntu-latest
     outputs:
-      tests_status: ${{ steps.check-status.outputs.jobs_status }}
+      tests_status: ${{ steps.check-tests-status.outputs.jobs_status }}
     steps:
       - name: Check upstream job statuses
+        id: check-tests-status
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
