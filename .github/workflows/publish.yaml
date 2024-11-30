@@ -39,26 +39,27 @@ jobs:
               run_id: context.payload.workflow_run.id
             });
             
-            // List of job names to check
-            const jobsToCheck = [
-              'Backend tests', 
-              'UI tests'
-            ];
-            
             // Find the jobs we want to check
             const relevantJobs = data.jobs.filter(job => jobsToCheck.includes(job.name));
             
             // Check if any job failed
             const failedJobs = relevantJobs.filter(job => job.conclusion === 'failure');
             
+            // Check if all jobs were skipped
+            const allSkippedJobs = relevantJobs.every(job => job.conclusion === 'skipped');
+            
             if (failedJobs.length > 0) {
+              console.log('🚨 Workflow Check Failed 🚨');
               console.log('The following jobs failed:');
               failedJobs.forEach(job => {
-                console.log(`- ${job.name}`);
+                console.log(`❌ ${job.name}`);
               });
               core.setOutput('jobs_status', 'failure');
+            } else if (allSkippedJobs) {
+              console.log('⏩ All specified jobs were skipped ⏩');
+              core.setOutput('jobs_status', 'skipped');
             } else {
-              console.log('All specified jobs passed or were skipped');
+              console.log('✅ All specified jobs passed successfully ✅');
               core.setOutput('jobs_status', 'success');
             }
 
