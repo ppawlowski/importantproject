@@ -53,14 +53,16 @@ jobs:
               failedJobs.forEach(job => {
                 console.log(`- ${job.name}`);
               });
-              process.exit(1);
+              core.setOutput('tests_status', 'failure');
             } else {
               console.log('All specified jobs passed or were skipped');
-              process.exit(0);
+              core.setOutput('tests_status', 'success');
             }
+
   publish:
     runs-on: ubuntu-latest
     needs: [check-upstream-jobs]
+    if: ${{ needs.check-upstream-jobs.outputs.tests_status == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
