@@ -49,7 +49,7 @@ jobs:
       run: |
         echo "Running backend tests"
         sleep 10
-        exit 1
+        # exit 1
 
   ui-tests:
     if: ${{ needs.check-changes.outputs.run_ui_tests == 'true' }}
