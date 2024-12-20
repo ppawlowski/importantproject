@@ -10,6 +10,15 @@ on:
       - main
 
 jobs:
+  debug:
+    name: Debug
+    runs-on: ubuntu-latest
+    steps:
+      - name: debug
+        run: |
+          echo "github.head_ref: ${{ github.head_ref }}"
+          echo "github.ref: ${{ github.ref }}"
+
   validate:
     name: Validate branch
     runs-on: ubuntu-latest
@@ -25,7 +34,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       # - name: Validate branch
       #   id: validate_branch
       #   run: |
