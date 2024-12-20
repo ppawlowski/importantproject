@@ -52,3 +52,6 @@ jobs:
 
       - name: Debug github context
         run: echo "${{ toJson(github) }}"
+      
+      - name: Run tests
+        run: echo "Running tests"
