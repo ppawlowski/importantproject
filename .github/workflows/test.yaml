@@ -22,7 +22,8 @@ jobs:
   validate:
     name: Validate branch
     runs-on: ubuntu-latest
-    if: !startsWith(github.head_ref, 'release-')
+    if: | 
+      !startsWith(github.head_ref, 'release-')
 
     # outputs:
     #   skip: ${{ steps.validate_branch.outputs.skip }}
