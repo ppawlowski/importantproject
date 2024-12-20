@@ -36,6 +36,7 @@ jobs:
               echo "skip=false" >> $GITHUB_OUTPUT
             fi
           fi
+
   default:
     name: Default test
     runs-on: ubuntu-latest
