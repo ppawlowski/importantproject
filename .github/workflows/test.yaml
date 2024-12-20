@@ -1,10 +1,11 @@
 name: Test
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   pull_request:
+    types: [opened, synchronize, reopened, closed]
     branches:
       - main
 
@@ -12,37 +13,38 @@ jobs:
   validate:
     name: Validate branch
     runs-on: ubuntu-latest
-    outputs:
-      skip: ${{ steps.validate_branch.outputs.skip }}
+    if: startsWith(github.head_ref, 'release-') || startsWith(github.ref, 'refs/heads/release-')
+    # outputs:
+    #   skip: ${{ steps.validate_branch.outputs.skip }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - name: Validate branch
-        id: validate_branch
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            if [[ "${{ github.head_ref }}" == release-* ]]; then
-              echo "skip=true" >> $GITHUB_OUTPUT
-            else
-              echo "skip=false" >> $GITHUB_OUTPUT
-            fi
-          elif [[ "${{ github.event_name }}" == "push" ]]; then
-            PREV_BRANCH=$(git name-rev --name-only HEAD~1)
-            echo "Previous branch: $PREV_BRANCH"
-            if [[ "$PREV_BRANCH" == release-* ]]; then
-              echo "skip=true" >> $GITHUB_OUTPUT
-            else
-              echo "skip=false" >> $GITHUB_OUTPUT
-            fi
-          fi
+      # - name: Validate branch
+      #   id: validate_branch
+      #   run: |
+      #     if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+      #       if [[ "${{ github.head_ref }}" == release-* ]]; then
+      #         echo "skip=true" >> $GITHUB_OUTPUT
+      #       else
+      #         echo "skip=false" >> $GITHUB_OUTPUT
+      #       fi
+      #     elif [[ "${{ github.event_name }}" == "push" ]]; then
+      #       PREV_BRANCH=$(git name-rev --name-only HEAD~1)
+      #       echo "Previous branch: $PREV_BRANCH"
+      #       if [[ "$PREV_BRANCH" == release-* ]]; then
+      #         echo "skip=true" >> $GITHUB_OUTPUT
+      #       else
+      #         echo "skip=false" >> $GITHUB_OUTPUT
+      #       fi
+      #     fi
 
   default:
     name: Default test
     runs-on: ubuntu-latest
     needs: validate
-    if: ${{ !needs.validate.outputs.skip }}
+    # if: ${{ !needs.validate.outputs.skip }}
     # if: |
     #   !startsWith(github.ref, 'refs/heads/release-') && 
     #   !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'release-'))
