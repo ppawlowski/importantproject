@@ -22,7 +22,6 @@ jobs:
       - name: Validate branch
         id: validate_branch
         run: |
-          echo "Previous branch from the context: $PREVIOUS_BRANCH"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             if [[ "${{ github.head_ref }}" == release-* ]]; then
               echo "skip=true" >> $GITHUB_OUTPUT
@@ -38,8 +37,6 @@ jobs:
               echo "skip=false" >> $GITHUB_OUTPUT
             fi
           fi
-        env:
-          PREVIOUS_BRANCH: ${{ github.event.before }}
 
   default:
     name: Default test
