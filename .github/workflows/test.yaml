@@ -30,6 +30,7 @@ jobs:
             fi
           elif [[ "${{ github.event_name }}" == "push" ]]; then
             PREV_BRANCH=$(git rev-parse --abbrev-ref HEAD~1)
+            echo "Previous branch: $PREV_BRANCH"
             if [[ "$PREV_BRANCH" == release-* ]]; then
               echo "skip=true" >> $GITHUB_OUTPUT
             else
