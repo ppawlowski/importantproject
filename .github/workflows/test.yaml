@@ -13,9 +13,12 @@ jobs:
     name: Default test
     runs-on: ubuntu-latest
     if: |
-      (!startsWith(github.ref, 'refs/heads/release-') && 
-      !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'release-'))) ||
-      !(github.event_name == 'push' && startsWith(github.head_ref, 'release-'))
+      !startsWith(github.ref, 'refs/heads/release-') && 
+      !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'release-'))
+    # if: |
+    #   (!startsWith(github.ref, 'refs/heads/release-') && 
+    #   !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'release-'))) ||
+    #   !(github.event_name == 'push' && startsWith(github.head_ref, 'release-'))
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
