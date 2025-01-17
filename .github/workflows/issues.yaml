@@ -1,0 +1,98 @@
+name: Update Started Date
+
+on:
+  issues:
+    types: [edited]
+
+jobs:
+  update-start-date:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Started Date
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            
+            // Check if the issue has been moved to "In Progress"
+            // This assumes you're using a project with status field
+            // You'll need to adjust the field names based on your project setup
+            const query = `query($owner:String!, $name:String!, $number:Int!) {
+              repository(owner:$owner, name:$name) {
+                issue(number:$number) {
+                  projectItems(first:1) {
+                    nodes {
+                      fieldValues(first:10) {
+                        nodes {
+                          ... on ProjectV2ItemFieldValue {
+                            field { ... on ProjectV2Field { name } }
+                            value
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }`;
+            
+            const variables = {
+              owner: context.repo.owner,
+              name: context.repo.repo,
+              number: issue.number
+            };
+            
+            const result = await github.graphql(query, variables);
+            
+            // Get the project item's field values
+            const fieldValues = result.repository.issue.projectItems.nodes[0]?.fieldValues.nodes;
+            
+            // Check if status is "In Progress"
+            const statusField = fieldValues?.find(field => field.field.name === 'Status');
+            if (statusField?.value === 'In Progress') {
+              // Find the Started field ID (you'll need to replace this with your actual field ID)
+              const projectQuery = `query($owner:String!, $name:String!) {
+                repository(owner:$owner, name:$name) {
+                  projectV2(number:1) {  # Replace with your project number
+                    field(name:"Started") {
+                      ... on ProjectV2Field {
+                        id
+                      }
+                    }
+                  }
+                }
+              }`;
+              
+              const projectResult = await github.graphql(projectQuery, {
+                owner: context.repo.owner,
+                name: context.repo.repo
+              });
+              
+              const startedFieldId = projectResult.repository.projectV2.field.id;
+              
+              // Update the Started date
+              const currentDate = new Date().toISOString().split('T')[0];
+              
+              const updateMutation = `mutation($projectId:ID!, $itemId:ID!, $fieldId:ID!, $value:String!) {
+                updateProjectV2ItemFieldValue(
+                  input: {
+                    projectId: $projectId
+                    itemId: $itemId
+                    fieldId: $fieldId
+                    value: $value
+                  }
+                ) {
+                  projectV2Item {
+                    id
+                  }
+                }
+              }`;
+              
+              await github.graphql(updateMutation, {
+                projectId: result.repository.issue.projectItems.nodes[0].id,
+                itemId: result.repository.issue.projectItems.nodes[0].id,
+                fieldId: startedFieldId,
+                value: currentDate
+              });
+            }
