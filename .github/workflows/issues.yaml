@@ -2,7 +2,7 @@ name: Update Started Date
 
 on:
   issues:
-    types: [edited]
+    # types: [edited]
 
 jobs:
   update-start-date:
